@@ -8,7 +8,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Start Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
+        with:
+          task: start-measurement
+        # continue-on-error: true # recommended setting for production. See notes below.
+
       - uses: actions/checkout@v4
+      - name: Checkout Repo Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
+        with:
+          task: get-measurement
+          label: 'repo checkout'
+        # continue-on-error: true # recommended setting for production. See notes below.
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -25,6 +38,13 @@ jobs:
             ${{ runner.os }}-
       - name: Install
         run: yarn --immutable
+      - name: Setup and install Measurment
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
+        with:
+          task: get-measurement
+          label: 'setup-and-install'
+        # continue-on-error: true # recommended setting for production. See notes below.
+
       - name: Build
         run: yarn build
       - name: Unit Tests
@@ -41,3 +61,8 @@ jobs:
           cd examples/my-ngsw-app
           npx playwright install chromium
           npm run test:e2e
+      - name: Show Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
+        with:
+          task: display-results
+        # continue-on-error: true # recommended setting for production. See notes below.
